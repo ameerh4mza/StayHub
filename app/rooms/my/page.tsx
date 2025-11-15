@@ -10,31 +10,26 @@ export default async function MyRoomsPage() {
   const userRole = await getCurrentUserRole();
   const currentUser = await getUser();
   
-  // Get creator information for admin view
   let creatorsInfo: Map<string, UserInfo> = new Map();
   const adminManagerIds: string[] = [];
   
   if (userRole === "admin" && rooms.length > 0) {
-    // Get all unique user IDs from the rooms
     const uniqueUserIds = [...new Set(rooms.map(room => room.user_id))];
     
-    // Get creator info for all rooms
     creatorsInfo = await getUsersInfo(uniqueUserIds);
+    console.log("Fetched creators info:", creatorsInfo);
     
-    // Get admin and manager IDs to determine roles
     const { teams } = createAdminClient();
     
     try {
       const teamList = await teams.list();
       
-      // Get admin team members
       const adminTeam = teamList.teams.find(team => team.name === "Admins");
       if (adminTeam) {
         const adminMemberships = await teams.listMemberships(adminTeam.$id);
         adminManagerIds.push(...adminMemberships.memberships.map(m => m.userId));
       }
       
-      // Get manager team members
       const managerTeam = teamList.teams.find(team => team.name === "Managers");
       if (managerTeam) {
         const managerMemberships = await teams.listMemberships(managerTeam.$id);
@@ -45,7 +40,6 @@ export default async function MyRoomsPage() {
     }
   }
   
-  // Dynamic title based on user role
   const getPageTitle = () => {
     switch (userRole) {
       case "admin":
@@ -57,7 +51,6 @@ export default async function MyRoomsPage() {
     }
   };
 
-  // Dynamic empty message based on user role
   const getEmptyMessage = () => {
     switch (userRole) {
       case "admin":
@@ -77,33 +70,41 @@ export default async function MyRoomsPage() {
   };
 
   return (
-    <div className="min-h-screen">
-      <h1 className="text-3xl font-bold text-foreground text-center mt-8 mb-8">
-        {getPageTitle()}
-      </h1>
-      {rooms.length === 0 ? (
-        <p className="text-center text-muted mt-8">{getEmptyMessage()}</p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10 md:gap-12 place-items-center px-8 mb-12">
-          {rooms.map((room) => {
-            const creatorInfo = creatorsInfo.get(room.user_id);
-            const creatorRole = getUserRole(room.user_id);
-            
-            return (
-              <UserRoomCard 
-                key={room.$id} 
-                room={room}
-                showCreatorInfo={userRole === "admin"}
-                currentUserId={currentUser.user?.$id}
-                creatorInfo={creatorInfo ? {
-                  name: creatorInfo.name,
-                  role: creatorRole
-                } : undefined}
-              />
-            );
-          })}
-        </div>
-      )}
+    <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-2">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-4xl font-extrabold text-foreground text-center mb-12 border-b border-border pb-4">
+          {getPageTitle()}
+        </h1>
+        
+        {rooms.length === 0 ? (
+          <div className="bg-muted/30 p-10 rounded-xl shadow-inner max-w-lg mx-auto">
+            <p className="text-center text-lg text-muted-foreground font-medium">
+              {getEmptyMessage()}
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-16"> 
+            {rooms.map((room) => {
+              const creatorInfo = creatorsInfo.get(room.user_id);
+              const creatorRole = getUserRole(room.user_id);
+              
+              return (
+                <div key={room.$id} className="w-full"> 
+                  <UserRoomCard 
+                    room={room}
+                    showCreatorInfo={userRole === "admin"}
+                    currentUserId={currentUser.user?.$id}
+                    creatorInfo={creatorInfo ? {
+                      name: creatorInfo.name,
+                      role: creatorRole
+                    } : undefined}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

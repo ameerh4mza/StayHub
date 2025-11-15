@@ -41,6 +41,7 @@ export default async function getMyRooms(): Promise<Room[]> {
           [Query.equal("user_id", adminManagerIds)]
         );
         rooms = allRooms;
+        console.log("Admin fetched rooms:", rooms);
       }
     } else if (userRole === "manager") {
       // Manager can only see rooms they created

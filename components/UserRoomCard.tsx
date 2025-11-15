@@ -30,7 +30,6 @@ export default function UserRoomCard({
   );
 
   useEffect(() => {
-    // Get user role for display purposes
     async function getUserRole() {
       try {
         const res = await fetch("/api/user-role", { cache: "no-store" });
@@ -54,8 +53,7 @@ export default function UserRoomCard({
   };
 
   return (
-    <div className="relative max-w-md mx-auto w-full bg-card border border-border rounded-xl overflow-hidden shadow-md hover:shadow-primary/20 transition-transform hover:scale-[1.01]">
-      {/* Image Section */}
+    <div className="relative max-w-md w-full bg-card border border-border rounded-xl overflow-hidden shadow-md hover:shadow-primary/20 transition-transform hover:scale-[1.01]">
       <div className="relative w-full aspect-4/3">
         <Image
           src={
@@ -69,8 +67,7 @@ export default function UserRoomCard({
         />
       </div>
 
-      {/* Content Section */}
-      <div className="p-4 flex flex-col justify-between">
+      <div className="p-4 flex flex-col justify-between min-h-60">
         <div>
           <h2 className="text-lg font-semibold text-foreground truncate">
             {room.name}
@@ -85,7 +82,6 @@ export default function UserRoomCard({
             <span className="text-xs font-normal text-gray-500">/hr</span>
           </p>
 
-          {/* Creator Info for Admins */}
           {showCreatorInfo && creatorInfo && !isOwnRoom && (
             <p className="text-xs text-muted mt-2">
               Created by:{" "}
@@ -105,7 +101,6 @@ export default function UserRoomCard({
           )}
         </div>
 
-        {/* Actions */}
         <div className="flex justify-end gap-2">
           <button
             onClick={() => setEditOpen(true)}
@@ -117,24 +112,20 @@ export default function UserRoomCard({
         </div>
       </div>
 
-      {/* Ownership Badge */}
       {getOwnershipBadge()}
 
-      {/* View Room Icon */}
       <div className="absolute top-3 right-3">
         <Link href={`/rooms/${room.$id}`}>
           <EyeIcon className="bg-primary h-8 w-8 rounded-full p-2 text-white" />
         </Link>
       </div>
 
-      {/* Edit Modal */}
       <EditRoomModal
         room={room}
         open={isEditOpen}
         onClose={() => setEditOpen(false)}
         onUpdate={() => {
           setEditOpen(false);
-          // Force page refresh to show updated image
           window.location.reload();
         }}
       />

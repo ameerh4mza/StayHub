@@ -51,7 +51,6 @@ export default function EditRoomModal({
   const [preview, setPreview] = useState<string | null>(null);
   const [mounted, setMounted] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  const [visible, setVisible] = useState(open); // For smooth animation
 
   const {
     register,
@@ -74,7 +73,6 @@ export default function EditRoomModal({
     },
   });
 
-  // Sync form values when modal opens
   useEffect(() => {
     if (open && room) {
       setValue("name", room.name);
@@ -88,28 +86,29 @@ export default function EditRoomModal({
       setValue("capacity", room.capacity || 0);
       setValue("amenities", room.amenities || "");
       setPreview(room.image || null);
-      setVisible(true); // Show modal for animation
-    } else if (!open) {
-      // Animate close
-      setVisible(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open]);
+  }, [open]); // eslint-disable-line
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-  if (!mounted) return null;
+  if (!open || !mounted) return null;
 
   async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
+
     setIsUploading(true);
     const previewUrl = URL.createObjectURL(file);
     setPreview(previewUrl);
 
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_PRESET!);
+    formData.append(
+      "upload_preset",
+      process.env.NEXT_PUBLIC_CLOUDINARY_PRESET!
+    );
 
     try {
       toast.loading("Uploading image...");
@@ -118,11 +117,15 @@ export default function EditRoomModal({
         { method: "POST", body: formData }
       );
       const data = await res.json();
+
       if (data.secure_url) {
         setValue("image", data.secure_url);
         toast.dismiss();
         toast.success("Image uploaded successfully!");
-      } else throw new Error("Cloudinary upload failed");
+        setPreview(data.secure_url);
+      } else {
+        throw new Error("Cloudinary upload failed");
+      }
     } catch (err) {
       console.error(err);
       toast.dismiss();
@@ -136,15 +139,23 @@ export default function EditRoomModal({
   const onSubmit = async (formData: FormData) => {
     try {
       toast.loading("Updating room...");
-      const payload = { ...room, ...formData } as Room;
+
+      const payload = {
+        ...room,
+        ...formData,
+      } as Room;
+
       const result = await editRoom(room.$id, payload);
+
       toast.dismiss();
 
       if (result.success) {
         toast.success("Room updated successfully!");
         onClose();
         onUpdate?.();
-      } else toast.error("Failed to update room");
+      } else {
+        toast.error("Failed to update room");
+      }
     } catch (error) {
       toast.dismiss();
       toast.error("An error occurred while updating the room");
@@ -154,70 +165,97 @@ export default function EditRoomModal({
 
   const modalContent = (
     <div
-      className={`fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 transition-opacity duration-300 ${
-        visible ? "opacity-100" : "opacity-0 pointer-events-none"
-      }`}
+      className="fixed inset-0 bg-black/40 flex items-center justify-center z-50"
       onClick={onClose}
     >
       <div
-        className={`bg-white dark:bg-card w-full max-w-2xl rounded-2xl shadow-2xl p-8 relative max-h-[90vh] overflow-y-auto transform transition-all duration-300 ${
-          visible ? "scale-100 opacity-100" : "scale-90 opacity-0"
-        }`}
+        className="bg-white dark:bg-card w-full max-w-2xl rounded-xl shadow-lg p-6 relative animate-fadeIn max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={onClose}
           type="button"
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-bold z-10 transition"
+          className="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-2xl font-bold z-10"
         >
           ×
         </button>
 
-        <h2 className="text-3xl font-bold mb-6 text-primary text-center">
+        <h2 className="text-xl font-semibold mb-4 text-foreground">
           Edit Room
         </h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {[
-              { label: "Room Name", field: "name" },
-              { label: "Address", field: "address" },
-              { label: "Availability", field: "availability" },
-              { label: "Price per Hour", field: "price_per_hour", type: "number" },
-              { label: "Location", field: "location" },
-              { label: "Capacity", field: "capacity", type: "number" },
-            ].map((item) => (
-              <div key={item.field}>
-                <label className="text-sm font-medium mb-1 block">{item.label}</label>
-                <input
-                  type={item.type || "text"}
-                  {...register(item.field as keyof FormData, item.type === "number" ? { valueAsNumber: true } : {})}
-                  className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition shadow-sm"
-                />
-                {errors[item.field as keyof FormData] && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors[item.field as keyof FormData]?.message as string}
-                  </p>
-                )}
-              </div>
-            ))}
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="text-sm font-medium">Room Name</label>
+              <input
+                {...register("name")}
+                className="w-full border px-3 py-2 rounded-md bg-background"
+              />
+              {errors.name && (
+                <p className="text-red-500 text-sm">{errors.name.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Address</label>
+              <input
+                {...register("address")}
+                className="w-full border px-3 py-2 rounded-md bg-background"
+              />
+              {errors.address && (
+                <p className="text-red-500 text-sm">{errors.address.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Availability</label>
+              <input
+                {...register("availability")}
+                className="w-full border px-3 py-2 rounded-md bg-background"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Price per Hour</label>
+              <input
+                {...register("price_per_hour", { valueAsNumber: true })}
+                className="w-full border px-3 py-2 rounded-md bg-background"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Location</label>
+              <input
+                {...register("location")}
+                className="w-full border px-3 py-2 rounded-md bg-background"
+              />
+            </div>
+
+            <div>
+              <label className="text-sm font-medium">Capacity</label>
+              <input
+                {...register("capacity", { valueAsNumber: true })}
+                className="w-full border px-3 py-2 rounded-md bg-background"
+              />
+            </div>
           </div>
 
           <div>
-            <label className="text-sm font-medium mb-1 block">Description</label>
+            <label className="text-sm font-medium">Description</label>
             <textarea
               {...register("description")}
-              rows={4}
-              className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-accent focus:border-accent transition shadow-sm resize-none"
+              rows={3}
+              className="w-full border px-3 py-2 rounded-md bg-background"
             />
-            {errors.description && (
-              <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
-            )}
           </div>
 
-          <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-accent transition relative">
-            <label htmlFor="image" className="cursor-pointer text-sm text-muted-foreground">
-              {isUploading ? "Uploading..." : "Click to upload image"}
+          <div className="border-2 border-dashed rounded-lg p-4 text-center">
+            <label
+              htmlFor="image"
+              className="cursor-pointer text-sm text-muted-foreground"
+            >
+              Click to upload image
               <input
                 type="file"
                 id="image"
@@ -228,15 +266,16 @@ export default function EditRoomModal({
                 onChange={handleImageChange}
               />
             </label>
+
             {preview && (
               <div className="mt-3 flex justify-center">
                 <Image
                   src={preview}
                   alt="Preview"
-                  width={150}
-                  height={150}
+                  width={120}
+                  height={120}
                   sizes="100"
-                  className="rounded-lg object-cover shadow-md"
+                  className="rounded-md object-cover"
                   unoptimized
                 />
               </div>
@@ -247,7 +286,7 @@ export default function EditRoomModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="bg-primary text-white font-semibold px-6 py-3 rounded-lg hover:bg-primary/90 transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="bg-primary text-white px-5 py-2 rounded-md hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? <Loader /> : "Update Room"}
             </button>
