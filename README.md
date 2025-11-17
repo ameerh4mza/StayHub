@@ -1,36 +1,349 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+🏠 StayHub – Room Booking Management System
 
-## Getting Started
+A comprehensive full-stack room booking management system with role-based access control, built using Next.js, TypeScript, and Appwrite.
 
-First, run the development server:
+📋 Table of Contents
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+Features
+
+Tech Stack
+
+Project Structure
+
+Installation
+
+Environment Variables
+
+Database Schema
+
+User Roles & Permissions
+
+API Routes
+
+Components
+
+Deployment
+
+Key Features Implementation
+
+Contributing
+
+License
+
+✨ Features
+🔐 Authentication & Authorization
+
+User registration/login with Appwrite Authentication
+
+Role-based access (Admin, Manager, User)
+
+Appwrite Teams for permission control
+
+Protected routes & middleware
+
+Secure session cookies
+
+🏢 Room Management
+
+Create, edit, delete rooms
+
+Cloudinary image uploads
+
+Advanced room info: capacity, amenities, price, location
+
+Availability & scheduling
+
+📅 Booking System
+
+Real-time availability validation
+
+Request booking, cancel booking
+
+Status: Pending, Confirmed, Rejected, Cancelled
+
+User booking history
+
+Admin/Manager booking controls
+
+🔔 Notification System
+
+Real-time notifications on status change
+
+Read/unread status
+
+Notification bell with counter
+
+👤 Profile Management
+
+Update user information
+
+Profile picture upload
+
+View role & account details
+
+🛠 Tech Stack
+Frontend
+
+Next.js 14 (App Router)
+
+TypeScript
+
+Tailwind CSS
+
+React Hook Form
+
+Zod
+
+React Hot Toast
+
+Backend
+
+Next.js Server Actions
+
+Appwrite (Database + Auth + Teams)
+
+Cloudinary for media storage
+
+📁 Project Structure
+```text
+StayHub/
+├── app/
+│   ├── actions/
+│   │   ├── bookRoom.tsx
+│   │   ├── getAllBookings.tsx
+│   │   ├── getAllRooms.tsx
+│   │   ├── getMyRooms.tsx
+│   │   ├── createRooms.tsx
+│   │   ├── editRoom.tsx
+│   │   ├── deleteRoom.tsx
+│   │   ├── manageBookings.tsx
+│   │   ├── cancelBooking.tsx
+│   │   ├── notifications.tsx
+│   │   ├── getCurrentUserRole.tsx
+│   │   └── checkRoomAvailability.tsx
+│   ├── api/
+│   │   ├── register/route.ts
+│   │   ├── login/route.ts
+│   │   ├── sign-out/route.ts
+│   │   ├── session/route.ts
+│   │   └── user-role/route.ts
+│   ├── auth/
+│   ├── admin/
+│   ├── manager/
+│   ├── rooms/
+│   ├── bookings/
+│   ├── profile/
+│   ├── add-room/
+│   ├── page.tsx
+│   └── layout.tsx
+├── components/
+│   ├── BookingForm.tsx
+│   ├── BookingRoomCard.tsx
+│   ├── AdminBookingCard.tsx
+│   ├── ManagerBookingCard.tsx
+│   ├── RoomCard.tsx
+│   ├── UserRoomCard.tsx
+│   ├── EditRoomModal.tsx
+│   ├── CancelBookingButton.tsx
+│   ├── NotificationBell.tsx
+│   ├── Navbar.tsx
+│   └── Footer.tsx
+├── types/
+│   ├── room.ts
+│   └── booking.ts
+├── config/appwrite.ts
+├── lib/getUserInfo.ts
+└── proxy.ts
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+🚀 Installation
+1. Clone Repo
+git clone https://github.com/yourusername/stayhub.git
+cd stayhub
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+2. Install Dependencies
+npm install
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Set Up Environment Variables
 
-## Learn More
+Create .env.local (see below).
 
-To learn more about Next.js, take a look at the following resources:
+4. Configure Appwrite
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Create database & collections
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Create teams (Admin, Manager, User)
 
-## Deploy on Vercel
+5. Run Dev Server
+npm run dev
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Open:
+👉 http://localhost:3000
+
+🔧 Environment Variables
+
+Create a .env.local file:
+
+NEXT_PUBLIC_APPWRITE_ENDPOINT=
+NEXT_PUBLIC_APPWRITE_PROJECT_ID=
+
+APPWRITE_API_KEY=
+APPWRITE_DATABASE_ID=
+APPWRITE_ROOMS_COLLECTION=
+APPWRITE_BOOKINGS_COLLECTION=
+APPWRITE_NOTIFICATIONS_COLLECTION=
+
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+
+🗄️ Database Schema
+Collections
+
+Rooms
+
+Bookings
+
+Notifications
+
+Appwrite Teams
+Team	Permissions
+Admins	Full system access
+Managers	Manage rooms & bookings for their own rooms
+Users	View rooms & create bookings
+👥 User Roles & Permissions
+🔑 Admin
+
+Full CRUD on all rooms
+
+Manage all bookings
+
+Access all dashboards
+
+🏢 Manager
+
+Manage their own rooms
+
+Approve/reject bookings
+
+View bookings for their rooms
+
+👤 User
+
+View rooms
+
+Create & cancel own bookings
+
+Manage profile
+
+Receive notifications
+
+🛣️ API Routes
+Authentication
+
+POST /api/register
+
+POST /api/login
+
+POST /api/sign-out
+
+GET /api/session
+
+GET /api/user-role
+
+Server Actions
+
+Rooms: createRooms, editRoom, deleteRoom, getAllRooms, getMyRooms
+
+Bookings: bookRoom, getAllBookings, manageBookings, cancelBooking
+
+Users: getCurrentUserRole
+
+Notifications: createNotification, getUserNotifications, markNotificationAsRead
+
+🧩 Components Overview
+Rooms
+
+RoomCard
+
+UserRoomCard
+
+EditRoomModal
+
+Bookings
+
+BookingForm
+
+BookingRoomCard
+
+AdminBookingCard
+
+ManagerBookingCard
+
+CancelBookingButton
+
+UI
+
+Navbar
+
+NotificationBell
+
+Footer
+
+🚀 Deployment
+Vercel (Recommended)
+
+Push code to GitHub
+
+Connect repo to Vercel
+
+Add all environment variables
+
+Deploy
+
+Manual
+npm run build
+npm start
+
+📝 Key Features Implementation
+✅ Real-time Availability
+
+Prevents double-booking
+
+Uses date overlap validation
+
+🌇 Image Uploads
+
+Cloudinary storage
+
+Preview before upload
+
+🔐 Role-Based Access
+
+Middleware protected routes
+
+Component-level checks
+
+🔔 Notification System
+
+Auto-notifications on status change
+
+Read/unread tracking
+
+🤝 Contributing
+
+Fork repository
+
+Create feature branch
+
+Commit changes
+
+Push branch
+
+Open Pull Request
+
+📄 License
+
+Licensed under the MIT License.
