@@ -60,7 +60,6 @@ export default function AdminBookingCard({
   return (
     <div className="bg-card border border-border rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
       <div className="flex flex-col xl:flex-row gap-6">
-        {/* Room Image */}
         {booking.image && (
           <div className="relative w-full xl:w-64 h-48 rounded-lg overflow-hidden shrink-0">
             <Image
@@ -73,7 +72,6 @@ export default function AdminBookingCard({
           </div>
         )}
 
-        {/* Booking Details */}
         <div className="flex-1 space-y-3">
           <div className="flex flex-wrap items-center gap-3 mb-3">
             <h3 className="text-xl font-semibold text-foreground">
@@ -88,7 +86,6 @@ export default function AdminBookingCard({
             </span>
           </div>
 
-          {/* Customer Info */}
           <div className="bg-muted/30 rounded-lg p-3 mb-3">
             <h4 className="font-semibold text-foreground mb-2">
               Customer Information
@@ -105,7 +102,6 @@ export default function AdminBookingCard({
             </div>
           </div>
 
-          {/* Booking Info */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
             <p className="text-muted">
               <span className="font-semibold text-foreground">Address:</span>{" "}
@@ -138,7 +134,6 @@ export default function AdminBookingCard({
           </div>
         </div>
 
-        {/* Admin Action Buttons */}
         <div className="flex flex-row xl:flex-col gap-3 xl:min-w-[180px]">
           {currentStatus === "pending" && (
             <>
@@ -169,7 +164,6 @@ export default function AdminBookingCard({
             </button>
           )}
 
-          {/* Status displays */}
           {currentStatus === "rejected" && (
             <div className="flex-1 xl:flex-none text-center py-3 px-4 bg-red-50 text-red-700 rounded-lg font-medium">
               ✗ Rejected

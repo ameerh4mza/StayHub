@@ -24,7 +24,6 @@ export type BookingWithRoom = Booking & {
   location?: string;
   price_per_hour: number;
   image?: string;
-  // User information (for admin views)
   user_name?: string;
   user_email?: string;
 };

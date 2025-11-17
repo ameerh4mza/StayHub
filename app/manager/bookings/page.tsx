@@ -7,7 +7,6 @@ import ManagerBookingCard from "@/components/ManagerBookingCard";
 import { createAdminClient } from "@/config/appwrite";
 
 export default async function ManagerBookingsPage() {
-  // Require manager or admin role
   await requireRole(["manager", "admin"]);
 
   const sessionCookie = await cookies();
@@ -19,14 +18,12 @@ export default async function ManagerBookingsPage() {
 
   const { databases } = createSessionClient(request);
 
-  // Fetch all bookings (managers can see all)
   const { documents: bookings } = await databases.listDocuments(
     process.env.NEXT_APPWRITE_DATABASE_ID!,
     process.env.NEXT_APPWRITE_BOOKINGS_COLLECTION_ID!,
     [Query.orderDesc("$createdAt")]
   );
 
-  // Enrich bookings with room details and user information
   const enrichedBookings = await Promise.all(
     bookings.map(async (booking) => {
       try {
@@ -36,7 +33,6 @@ export default async function ManagerBookingsPage() {
           booking.room_id
         );
 
-        // Get real user information using Appwrite Users API
         const { users } = createAdminClient();
         let userName = "Unknown User";
         let userEmail = "Not available";

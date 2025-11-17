@@ -17,7 +17,6 @@ export function createAdminClient() {
     .setProject(project)
     .setKey(key);
 
-  // Return the services you need
   return {
     get account() {
       return new Account(client);
@@ -34,7 +33,6 @@ export function createAdminClient() {
   };
 }
 
-// Session client to make requests for the logged in user
 export function createSessionClient(request: Request) {
   const endpoint = process.env.NEXT_PUBLIC_APPWRITE_ENDPOINT;
   const project = process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID;
@@ -45,7 +43,6 @@ export function createSessionClient(request: Request) {
   }
   const client = new Client().setEndpoint(endpoint).setProject(project);
 
-  // Get the session cookie from the request and set the session
   const cookies = parseCookies(request.headers.get("cookie") ?? "");
   const session = cookies.get(SESSION_COOKIE);
   if (!session) {
@@ -54,7 +51,6 @@ export function createSessionClient(request: Request) {
 
   client.setSession(session);
 
-  // Return the services you need
   return {
     get account() {
       return new Account(client);
@@ -68,7 +64,6 @@ export function createSessionClient(request: Request) {
   };
 }
 
-// Helper function to parse cookies
 function parseCookies(cookies: string) {
   const map = new Map();
   for (const cookie of cookies.split(";")) {

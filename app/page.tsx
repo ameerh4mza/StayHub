@@ -1,12 +1,14 @@
-import getAllRooms from './actions/getAllRooms';
-import RoomCard from '@/components/RoomCard';
+import getAllRooms from "./actions/getAllRooms";
+import RoomCard from "@/components/RoomCard";
 
 export default async function Home() {
   const rooms = await getAllRooms();
 
   return (
     <div className="min-h-screen">
-      <h1 className='text-3xl font-bold text-foreground text-center mt-8 mb-8'>Available Rooms</h1>
+      <h1 className="text-3xl font-bold text-foreground text-center mt-8 mb-8">
+        Available Rooms
+      </h1>
       {rooms.length === 0 ? (
         <p>No rooms available</p>
       ) : (

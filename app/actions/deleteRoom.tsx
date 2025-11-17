@@ -22,7 +22,6 @@ export default async function deleteRoom(
       redirect("/auth/login");
     }
 
-    //  Only admins and managers can delete rooms
     const { role } = await requireRole(["admin", "manager"]);
 
     const { account } = createSessionClient(request);
@@ -31,40 +30,35 @@ export default async function deleteRoom(
 
     const { databases } = createAdminClient();
 
-    //  Directly fetch the room
     const roomToDelete = await databases.getDocument(
       process.env.NEXT_APPWRITE_DATABASE_ID!,
       process.env.NEXT_APPWRITE_ROOMS_COLLECTION_ID!,
       roomId
     );
 
-    // Check permissions based on role
     if (role === "admin") {
-      // Admin can delete rooms created by admin and manager
       const adminManagerIds = await getAdminManagerUserIds();
       if (!adminManagerIds.includes(roomToDelete.user_id)) {
-        throw new Error("Admins can only delete rooms created by admins or managers.");
+        throw new Error(
+          "Admins can only delete rooms created by admins or managers."
+        );
       }
     } else if (role === "manager") {
-      // Manager can only delete rooms they created
       if (roomToDelete.user_id !== user.$id) {
         throw new Error("Managers can only delete their own rooms.");
       }
     } else {
-      // Regular users can only delete their own rooms (if they have any)
       if (roomToDelete.user_id !== user.$id) {
         throw new Error("You can only delete your own rooms.");
       }
     }
 
-    //  Delete the room
     await databases.deleteDocument(
       process.env.NEXT_APPWRITE_DATABASE_ID!,
       process.env.NEXT_APPWRITE_ROOMS_COLLECTION_ID!,
       roomId
     );
 
-    //  Revalidate relevant pages
     revalidatePath("/rooms/my", "layout");
     revalidatePath("/", "layout");
 
@@ -75,37 +69,36 @@ export default async function deleteRoom(
   }
 }
 
-// Helper function to get all admin and manager user IDs
 async function getAdminManagerUserIds(): Promise<string[]> {
   try {
     const { teams } = createAdminClient();
     const userIds: string[] = [];
 
-    // Get admin team members
     try {
       const teamList = await teams.list();
-      const adminTeam = teamList.teams.find(team => team.name === "Admins");
+      const adminTeam = teamList.teams.find((team) => team.name === "Admins");
       if (adminTeam) {
         const adminMemberships = await teams.listMemberships(adminTeam.$id);
-        userIds.push(...adminMemberships.memberships.map(m => m.userId));
+        userIds.push(...adminMemberships.memberships.map((m) => m.userId));
       }
     } catch (error) {
       console.error("Error fetching admin team:", error);
     }
 
-    // Get manager team members
     try {
       const teamList = await teams.list();
-      const managerTeam = teamList.teams.find(team => team.name === "Managers");
+      const managerTeam = teamList.teams.find(
+        (team) => team.name === "Managers"
+      );
       if (managerTeam) {
         const managerMemberships = await teams.listMemberships(managerTeam.$id);
-        userIds.push(...managerMemberships.memberships.map(m => m.userId));
+        userIds.push(...managerMemberships.memberships.map((m) => m.userId));
       }
     } catch (error) {
       console.error("Error fetching manager team:", error);
     }
 
-    return [...new Set(userIds)]; // Remove duplicates
+    return [...new Set(userIds)];
   } catch (error) {
     console.error("Error getting admin/manager user IDs:", error);
     return [];

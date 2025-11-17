@@ -4,11 +4,8 @@ import { Room } from "@/types/room";
 
 export default function RoomCard({ room }: { room: Room }) {
   return (
-    // Card Container remains unchanged
     <div className="w-full max-w-sm mx-auto bg-card border border-border rounded-xl overflow-hidden shadow-lg transition-all duration-300 ease-in-out hover:shadow-xl hover:shadow-primary/20 hover:scale-[1.03]">
-      
-      {/* Image Section remains unchanged */}
-      <div className="relative w-full aspect-video"> 
+      <div className="relative w-full aspect-video">
         <Image
           src={
             room.image?.replace("/upload/", "/upload/f_auto,q_auto,w_800/") ||
@@ -19,35 +16,30 @@ export default function RoomCard({ room }: { room: Room }) {
           fill
           className="object-cover"
         />
-        
-        {/* Price Tag Badge Overlay */}
+
         <div className="absolute top-3 left-3 bg-primary text-primary-foreground font-extrabold px-3 py-1 rounded-full text-sm shadow-md">
           ${room.price_per_hour}
           <span className="text-xs font-medium ml-1">/hr</span>
         </div>
       </div>
 
-      {/* Content Section - Fixed Height (h-[200px]) for uniformity */}
-      {/* Reduced outer spacing from p-5 to p-4 and space-y-4 to space-y-3 */}
       <div className="p-4 space-y-3 h-[200px] flex flex-col justify-between">
-        <div className="space-y-1"> {/* Reduced inner spacing from space-y-2 to space-y-1 */}
+        <div className="space-y-1">
+          {" "}
+          {/* Reduced inner spacing from space-y-2 to space-y-1 */}
           <h2 className="text-xl font-extrabold text-foreground truncate">
             {room.name}
           </h2>
-          
-          {/*  FIX: Removed min-h-10 to allow the address to take less vertical space when short. */}
-          <p className="text-sm text-muted line-clamp-2"> 
-            <span className="font-semibold text-primary">Address:</span> {room.address}
+          <p className="text-sm text-muted line-clamp-2">
+            <span className="font-semibold text-primary">Address:</span>{" "}
+            {room.address}
           </p>
-          
-          {/* Availability Tag */}
           <p className="text-sm text-muted">
-            <span className="font-semibold text-primary">Available: </span>{room.availability}
+            <span className="font-semibold text-primary">Available: </span>
+            {room.availability}
           </p>
         </div>
 
-        {/* Action Button Section */}
-        {/* Adjusted pt-4 to pt-3 */}
         <div className="border-t border-border pt-3 flex items-center justify-end">
           <Link
             href={`/rooms/${room.$id}`}

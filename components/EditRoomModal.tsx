@@ -74,6 +74,11 @@ export default function EditRoomModal({
   });
 
   useEffect(() => {
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
+    }
     if (open && room) {
       setValue("name", room.name);
       setValue("description", room.description || "");
@@ -99,6 +104,16 @@ export default function EditRoomModal({
     const file = e.target.files?.[0];
     if (!file) return;
 
+    console.log("Starting image upload...");
+    console.log(
+      "Cloudinary preset:",
+      process.env.NEXT_PUBLIC_CLOUDINARY_PRESET
+    );
+    console.log(
+      "Cloudinary cloud name:",
+      process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+    );
+
     setIsUploading(true);
     const previewUrl = URL.createObjectURL(file);
     setPreview(previewUrl);
@@ -112,22 +127,40 @@ export default function EditRoomModal({
 
     try {
       toast.loading("Uploading image...");
+
+      console.log("Making request to Cloudinary...");
       const res = await fetch(
         `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
-        { method: "POST", body: formData }
+        {
+          method: "POST",
+          body: formData,
+        }
       );
+
+      console.log("Response status:", res.status);
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.error("Cloudinary error response:", errorText);
+        throw new Error(`Upload failed: ${res.status}`);
+      }
+
       const data = await res.json();
+      console.log("Cloudinary response:", data);
 
       if (data.secure_url) {
         setValue("image", data.secure_url);
+        URL.revokeObjectURL(previewUrl);
+        setPreview(data.secure_url);
         toast.dismiss();
         toast.success("Image uploaded successfully!");
-        setPreview(data.secure_url);
       } else {
-        throw new Error("Cloudinary upload failed");
+        throw new Error("No secure_url in response");
       }
     } catch (err) {
-      console.error(err);
+      console.error("Upload error:", err);
+      URL.revokeObjectURL(previewUrl);
+      setPreview(room.image || null);
       toast.dismiss();
       toast.error("Image upload failed");
     } finally {

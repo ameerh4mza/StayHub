@@ -7,10 +7,8 @@ export async function POST(req: Request) {
     const { email, password, name } = await req.json();
     const { account, teams } = createAdminClient();
 
-    // Create user in Appwrite
-     await account.create(ID.unique(), email, password, name);
+    await account.create(ID.unique(), email, password, name);
 
-    // Get or create the "Users" team
     let userTeam;
     try {
       const teamsList = await teams.list();
@@ -28,14 +26,13 @@ export async function POST(req: Request) {
 
     const session = await account.createEmailPasswordSession(email, password);
 
-    // Save session in cookie
     const res = NextResponse.json({ success: true, userId: session.userId });
     res.cookies.set(SESSION_COOKIE, session.secret, {
       path: "/",
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
     });
 
     return res;

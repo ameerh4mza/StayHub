@@ -18,8 +18,8 @@ import {
   X,
 } from "lucide-react";
 
-// Helper class for consistent link styling
-const baseLinkStyle = "text-foreground hover:text-primary transition-colors duration-200 ease-in-out";
+const baseLinkStyle =
+  "text-foreground hover:text-primary transition-colors duration-200 ease-in-out";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -40,7 +40,6 @@ export default function Navbar() {
           const roleData = await roleRes.json();
           setUserRole(roleData.role);
 
-          // Get user ID for notifications
           const userRes = await fetch("/api/user", { cache: "no-store" });
           const userData = await userRes.json();
           if (userData.success) {
@@ -54,7 +53,7 @@ export default function Navbar() {
     }
 
     checkSession();
-    setIsOpen(false); // Close mobile menu on route change
+    setIsOpen(false);
   }, [pathname]);
 
   // // Disabling the rule here because the component needs to reset UI state (menu)
@@ -65,7 +64,6 @@ export default function Navbar() {
     <nav className="bg-background/80 backdrop-blur-md shadow-lg sticky top-0 z-50 border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
           <Link href="/" className="shrink-0">
             <Image
               src="/logo.png"
@@ -79,7 +77,6 @@ export default function Navbar() {
             />
           </Link>
 
-          {/* Main Links (Desktop) */}
           <div className="hidden md:flex items-center justify-center grow">
             <div className="flex items-center space-x-8">
               <Link href="/" className={baseLinkStyle}>
@@ -94,7 +91,6 @@ export default function Navbar() {
                     Bookings <BookIcon className="w-4 h-4" />
                   </Link>
 
-                  {/* Manager/Admin links */}
                   {(userRole === "manager" || userRole === "admin") && (
                     <>
                       <Link
@@ -118,7 +114,6 @@ export default function Navbar() {
                     </>
                   )}
 
-                  {/* Admin only links */}
                   {userRole === "admin" && (
                     <Link
                       href="/admin/bookings"
@@ -132,8 +127,7 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Auth Section (Desktop) */}
-          <div className="hidden md:flex items-center space-x-6"> {/* Separated auth links and icons for better focus */}
+          <div className="hidden md:flex items-center space-x-6">
             {!isLoggedIn ? (
               <>
                 <Link
@@ -151,7 +145,6 @@ export default function Navbar() {
               </>
             ) : (
               <div className="flex items-center gap-6">
-                {/* Notifications Bell - Only for regular users */}
                 {userId && userRole === "user" && (
                   <NotificationBell userId={userId} />
                 )}
@@ -166,7 +159,6 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Hamburger Menu (Mobile) */}
           <button
             onClick={() => setIsOpen(!isOpen)}
             className="md:hidden p-2 text-foreground rounded-md hover:bg-muted focus:outline-none focus:ring-2 focus:ring-primary transition-colors"
@@ -178,7 +170,6 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile Menu */}
       <div
         className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
           isOpen ? "max-h-screen opacity-100" : "max-h-0 opacity-0"
@@ -186,13 +177,15 @@ export default function Navbar() {
         id="mobile-menu"
       >
         <div className="px-4 pt-2 pb-3 space-y-1 sm:px-3 border-t border-border">
-          <Link href="/" className={`${baseLinkStyle} block px-3 py-2 rounded-md text-base font-medium`}>
+          <Link
+            href="/"
+            className={`${baseLinkStyle} block px-3 py-2 rounded-md text-base font-medium`}
+          >
             Rooms
           </Link>
 
           {isLoggedIn && (
             <>
-              {/* User Links */}
               <Link
                 href="/bookings"
                 className={`${baseLinkStyle} flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium`}
@@ -200,7 +193,6 @@ export default function Navbar() {
                 Bookings <BookIcon className="w-4 h-4" />
               </Link>
 
-              {/* Manager/Admin mobile links */}
               {(userRole === "manager" || userRole === "admin") && (
                 <>
                   <Link
@@ -224,7 +216,6 @@ export default function Navbar() {
                 </>
               )}
 
-              {/* Admin only mobile links */}
               {userRole === "admin" && (
                 <Link
                   href="/admin/bookings"
@@ -234,8 +225,6 @@ export default function Navbar() {
                 </Link>
               )}
 
-              {/* Regular user mobile links (only show My Rooms if not admin/manager) */}
-              {/* This conditional logic seems slightly redundant given the Admin/Manager block above, but kept for strict adherence to functionality */}
               {userRole === "user" && (
                 <Link
                   href="/rooms/my"
@@ -247,7 +236,6 @@ export default function Navbar() {
             </>
           )}
 
-          {/* Auth Links (Mobile) */}
           <div className="pt-2 border-t border-border">
             {!isLoggedIn ? (
               <>
@@ -274,11 +262,10 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Mobile Notification Bell (Displayed last in mobile view) */}
           {userId && isLoggedIn && userRole === "user" && (
-             <div className="flex justify-center py-4">
-                <NotificationBell userId={userId} />
-             </div>
+            <div className="flex justify-center py-4">
+              <NotificationBell userId={userId} />
+            </div>
           )}
         </div>
       </div>

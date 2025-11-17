@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import Loader from "./Loader";
-import {z} from "zod";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {useForm} from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 
 type ContactFormData = {
   name: string;
@@ -22,7 +22,12 @@ const contactFormSchema = z.object({
 export default function ContactForm() {
   const [isSending, setIsSending] = useState(false);
 
-  const { register, handleSubmit, resetField, formState: { errors } } = useForm({
+  const {
+    register,
+    handleSubmit,
+    resetField,
+    formState: { errors },
+  } = useForm({
     resolver: zodResolver(contactFormSchema),
   });
 
@@ -59,24 +64,30 @@ export default function ContactForm() {
         <input
           type="text"
           placeholder="Your Name"
-          {...register('name', { required: true })}
+          {...register("name", { required: true })}
           className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent transition"
         />
-        {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+        {errors.name && (
+          <p className="text-red-500 text-sm">{errors.name.message}</p>
+        )}
         <input
           type="email"
           placeholder="Your Email"
-          {...register('email', { required: true })}
+          {...register("email", { required: true })}
           className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent transition"
         />
-        {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+        {errors.email && (
+          <p className="text-red-500 text-sm">{errors.email.message}</p>
+        )}
         <textarea
           placeholder="Your Query"
-          {...register('message', { required: true })}
+          {...register("message", { required: true })}
           className="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-accent transition resize-none"
           rows={5}
         />
-        {errors.message && <p className="text-red-500 text-sm">{errors.message.message}</p>}
+        {errors.message && (
+          <p className="text-red-500 text-sm">{errors.message.message}</p>
+        )}
         <button
           type="submit"
           disabled={isSending}

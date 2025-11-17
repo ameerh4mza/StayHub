@@ -5,19 +5,16 @@ import { BookingWithRoom } from "@/types/booking";
 import AdminBookingCard from "@/components/AdminBookingCard";
 
 export default async function AdminBookingsPage() {
-  // Only admins can access this page
   await requireRole(["admin"]);
 
   const { databases } = createAdminClient();
 
-  // Fetch all bookings with full admin access
   const { documents: bookings } = await databases.listDocuments(
     process.env.NEXT_APPWRITE_DATABASE_ID!,
     process.env.NEXT_APPWRITE_BOOKINGS_COLLECTION_ID!,
     [Query.orderDesc("$createdAt")]
   );
 
-  // Enrich bookings with room details and user information
   const enrichedBookings = await Promise.all(
     bookings.map(async (booking) => {
       try {
@@ -27,7 +24,6 @@ export default async function AdminBookingsPage() {
           booking.room_id
         );
 
-        // Get real user information using Appwrite Users API
         const { users } = createAdminClient();
         let userName = "Unknown User";
         let userEmail = "Not available";
@@ -66,7 +62,6 @@ export default async function AdminBookingsPage() {
     })
   );
 
-  // Group bookings by status for better admin overview
   const pendingBookings = enrichedBookings.filter(
     (b) => b.status === "pending"
   );
@@ -84,7 +79,6 @@ export default async function AdminBookingsPage() {
           Admin - All Bookings Overview
         </h1>
 
-        {/* Statistics Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div className="bg-card border border-border rounded-xl p-6 text-center">
             <h3 className="text-2xl font-bold text-primary">
@@ -119,7 +113,6 @@ export default async function AdminBookingsPage() {
           </div>
         ) : (
           <div className="space-y-8">
-            {/* Pending Bookings */}
             {pendingBookings.length > 0 && (
               <div>
                 <h2 className="text-2xl font-semibold text-foreground mb-4">
@@ -133,7 +126,6 @@ export default async function AdminBookingsPage() {
               </div>
             )}
 
-            {/* All Bookings */}
             <div>
               <h2 className="text-2xl font-semibold text-foreground mb-4">
                 All Bookings

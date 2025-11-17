@@ -14,7 +14,6 @@ export async function POST(req: Request) {
 
     const { users } = createAdminClient();
 
-    //  Update the user's preferences in Appwrite
     await users.updatePrefs(userId, { image: imageUrl });
 
     return NextResponse.json({ success: true });

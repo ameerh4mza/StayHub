@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getUserNotifications, markNotificationAsRead } from "@/app/actions/notifications";
+import {
+  getUserNotifications,
+  markNotificationAsRead,
+} from "@/app/actions/notifications";
+import { Bell, ThumbsUp, Ban, X } from "lucide-react";
+import Loader from "./Loader";
 
 interface Notification {
   $id: string;
@@ -32,15 +37,15 @@ export default function NotificationBell({ userId }: { userId: string }) {
         setLoading(false);
       }
     };
-    
+
     loadNotifications();
   }, [userId]);
 
   const handleMarkAsRead = async (notificationId: string) => {
     try {
       await markNotificationAsRead(notificationId);
-      setNotifications(prev => 
-        prev.filter(notif => notif.$id !== notificationId)
+      setNotifications((prev) =>
+        prev.filter((notif) => notif.$id !== notificationId)
       );
     } catch (error) {
       console.error("Error marking notification as read:", error);
@@ -50,13 +55,13 @@ export default function NotificationBell({ userId }: { userId: string }) {
   const getNotificationIcon = (type: Notification["type"]) => {
     switch (type) {
       case "booking_confirmed":
-        return "✅";
+        return <ThumbsUp className="w-5 h-5 text-green-500" />;
       case "booking_rejected":
-        return "❌";
+        return <X className="w-5 h-5 text-red-500" />;
       case "booking_cancelled":
-        return "🚫";
+        return <Ban className="w-5 h-5 text-yellow-500" />;
       default:
-        return "🔔";
+        return <Bell className="w-5 h-5 text-foreground" />;
     }
   };
 
@@ -64,26 +69,12 @@ export default function NotificationBell({ userId }: { userId: string }) {
 
   return (
     <div className="relative">
-      {/* Notification Bell */}
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="relative p-2 text-foreground hover:text-primary transition-colors"
       >
-        <svg
-          className="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-          />
-        </svg>
-        
-        {/* Notification Count Badge */}
+        <Bell className="w-5 h-5" />
+
         {unreadCount > 0 && (
           <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
             {unreadCount > 9 ? "9+" : unreadCount}
@@ -91,15 +82,16 @@ export default function NotificationBell({ userId }: { userId: string }) {
         )}
       </button>
 
-      {/* Notification Dropdown */}
       {isOpen && (
         <div className="absolute right-0 mt-2 w-80 bg-card border border-border rounded-lg shadow-lg z-50 max-h-96 overflow-y-auto">
           <div className="p-4 border-b border-border">
             <h3 className="font-semibold text-foreground">Notifications</h3>
           </div>
-          
+
           {loading ? (
-            <div className="p-4 text-center text-muted">Loading...</div>
+            <div className="p-4 text-center text-muted">
+              <Loader />
+            </div>
           ) : notifications.length === 0 ? (
             <div className="p-4 text-center text-muted">
               No new notifications
@@ -107,7 +99,10 @@ export default function NotificationBell({ userId }: { userId: string }) {
           ) : (
             <div className="divide-y divide-border">
               {notifications.map((notification) => (
-                <div key={notification.$id} className="p-4 hover:bg-muted/50 transition-colors">
+                <div
+                  key={notification.$id}
+                  className="p-4 hover:bg-muted/50 transition-colors"
+                >
                   <div className="flex items-start gap-3">
                     <span className="text-lg shrink-0">
                       {getNotificationIcon(notification.type)}
@@ -131,12 +126,12 @@ export default function NotificationBell({ userId }: { userId: string }) {
               ))}
             </div>
           )}
-          
+
           {notifications.length > 0 && (
             <div className="p-2 border-t border-border">
               <button
                 onClick={() => {
-                  notifications.forEach(notif => handleMarkAsRead(notif.$id));
+                  notifications.forEach((notif) => handleMarkAsRead(notif.$id));
                 }}
                 className="w-full text-sm text-primary hover:text-primary/80 transition-colors"
               >

@@ -21,11 +21,9 @@ export default async function cancelBooking(
     }
 
     const { account, databases } = await createSessionClient(request);
-    // Get the current user id
     const user = await account.get();
     const userId = user.$id;
 
-    // First, get the specific booking to verify it belongs to the user
     try {
       const booking = await databases.getDocument(
         process.env.NEXT_APPWRITE_DATABASE_ID!,
@@ -33,7 +31,6 @@ export default async function cancelBooking(
         bookingId
       );
 
-      // Verify the booking belongs to the current user
       if (booking.user_id !== userId) {
         return {
           success: false,
@@ -50,7 +47,6 @@ export default async function cancelBooking(
         }
       );
 
-      // Revalidate the bookings page
       revalidatePath("/bookings", "layout");
 
       return {

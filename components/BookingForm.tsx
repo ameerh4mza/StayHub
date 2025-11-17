@@ -4,7 +4,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import bookRoom from "@/app/actions/bookRoom";
-import {Room} from "@/types/room";
+import { Room } from "@/types/room";
 import toast from "react-hot-toast";
 
 type BookingData = {
@@ -19,7 +19,7 @@ const schema = z.object({
   room_id: z.string().min(1),
 });
 
-export default function BookingForm({room}: {room: Room}) {
+export default function BookingForm({ room }: { room: Room }) {
   const {
     register,
     handleSubmit,
@@ -28,13 +28,14 @@ export default function BookingForm({room}: {room: Room}) {
     resolver: zodResolver(schema),
   });
 
-
   const onSubmit = async (data: BookingData) => {
     const roomBooking = await bookRoom({ data });
     if (roomBooking.success) {
       toast.success("Room booked successfully!");
     } else {
-      toast.error((roomBooking as { error?: string }).error || "Failed to book room.");
+      toast.error(
+        (roomBooking as { error?: string }).error || "Failed to book room."
+      );
     }
   };
 

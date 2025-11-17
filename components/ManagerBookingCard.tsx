@@ -58,7 +58,6 @@ export default function ManagerBookingCard({
   return (
     <div className="bg-card border border-border rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow">
       <div className="flex flex-col lg:flex-row gap-6">
-        {/* Room Image */}
         {booking.image && (
           <div className="relative w-full lg:w-64 h-48 rounded-lg overflow-hidden shrink-0">
             <Image
@@ -71,7 +70,6 @@ export default function ManagerBookingCard({
           </div>
         )}
 
-        {/* Booking Details */}
         <div className="flex-1 space-y-3">
           <div className="flex flex-wrap items-center gap-3 mb-3">
             <h3 className="text-xl font-semibold text-foreground">
@@ -86,7 +84,6 @@ export default function ManagerBookingCard({
             </span>
           </div>
 
-          {/* Customer Info */}
           <div className="bg-muted/30 rounded-lg p-3 mb-3">
             <h4 className="font-semibold text-foreground mb-2">
               Customer Information
@@ -122,12 +119,6 @@ export default function ManagerBookingCard({
               <span className="font-semibold text-foreground">Check-out:</span>{" "}
               {new Date(booking.check_out).toLocaleString()}
             </p>
-            {/* <p className="text-muted">
-              <span className="font-semibold text-foreground">Booking ID:</span>{" "}
-              <code className="text-xs bg-muted px-1 py-0.5 rounded">
-                {booking.$id}
-              </code>
-            </p> */}
           </div>
 
           <div className="pt-2">
@@ -137,7 +128,6 @@ export default function ManagerBookingCard({
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex flex-row lg:flex-col gap-3 lg:min-w-40">
           {currentStatus === "pending" && (
             <>

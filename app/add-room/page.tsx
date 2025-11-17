@@ -7,7 +7,7 @@ import { createRoom } from "../actions/createRooms";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import Image from "next/image"; 
+import Image from "next/image";
 import Loader from "@/components/Loader";
 
 type FormData = {
@@ -37,8 +37,7 @@ const schema = z.object({
 });
 
 export default function AddRoomPage() {
-
-  const [isUploading, setIsUploading] = useState(false); 
+  const [isUploading, setIsUploading] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
   const cloudinaryCloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
@@ -70,17 +69,14 @@ export default function AddRoomPage() {
     setIsCreating(false);
   }
 
-  // Handle Image Upload to Cloudinary
-
   async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
     setIsUploading(true);
-    //setting local url for preview
+
     const previewUrl = URL.createObjectURL(file);
     setPreview(previewUrl);
 
-    // Prepare form data for Cloudinary
     const formData = new FormData();
     formData.append("file", file);
     formData.append("upload_preset", cloudinaryUploadPreset!);
@@ -99,7 +95,6 @@ export default function AddRoomPage() {
       const data = await res.json();
 
       if (data.secure_url) {
-        // Save permanent Cloudinary URL to the form
         setValue("image", data.secure_url);
         toast.dismiss();
         toast.success("Image uploaded successfully!");
@@ -112,7 +107,7 @@ export default function AddRoomPage() {
       toast.error("Image upload failed");
     } finally {
       setIsUploading(false);
-      e.target.value = ""; // Reset file input
+      e.target.value = "";
     }
   }
 
@@ -127,7 +122,6 @@ export default function AddRoomPage() {
           className="max-w-5xl mx-auto bg-card border border-border rounded-2xl shadow-md p-10 md:p-12 space-y-8 transition-all duration-300"
         >
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Room Name */}
             <div>
               <label
                 htmlFor="name"
@@ -149,7 +143,6 @@ export default function AddRoomPage() {
               )}
             </div>
 
-            {/* Address */}
             <div>
               <label
                 htmlFor="address"
@@ -169,7 +162,6 @@ export default function AddRoomPage() {
               )}
             </div>
 
-            {/* Availability */}
             <div>
               <label
                 htmlFor="availability"
@@ -191,7 +183,6 @@ export default function AddRoomPage() {
               )}
             </div>
 
-            {/* Price per Hour */}
             <div>
               <label
                 htmlFor="price_per_hour"
@@ -213,7 +204,6 @@ export default function AddRoomPage() {
               )}
             </div>
 
-            {/* Location */}
             <div>
               <label
                 htmlFor="location"
@@ -230,7 +220,6 @@ export default function AddRoomPage() {
               />
             </div>
 
-            {/* Square Footage */}
             <div>
               <label
                 htmlFor="sqft"
@@ -252,7 +241,6 @@ export default function AddRoomPage() {
               )}
             </div>
 
-            {/* Capacity */}
             <div>
               <label
                 htmlFor="capacity"
@@ -269,7 +257,6 @@ export default function AddRoomPage() {
               />
             </div>
 
-            {/* Amenities */}
             <div>
               <label
                 htmlFor="amenities"
@@ -292,7 +279,6 @@ export default function AddRoomPage() {
             </div>
           </div>
 
-          {/* Description */}
           <div>
             <label
               htmlFor="description"
@@ -314,7 +300,6 @@ export default function AddRoomPage() {
             )}
           </div>
 
-          {/* File Upload */}
           <div className="border-2 border-dashed border-border rounded-xl p-6 text-center hover:border-primary transition-all duration-300">
             <label
               htmlFor="image"
@@ -353,17 +338,20 @@ export default function AddRoomPage() {
             )}
           </div>
 
-          {/* Submit */}
           <button
             type="submit"
             disabled={isCreating || isUploading}
             className="w-full md:w-auto min-w-[140px] bg-primary text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 hover:bg-primary/90 hover:-translate-y-0.5 shadow-md hover:shadow-primary/30"
           >
-            {isCreating ? (<Loader />) :
-            isUploading ? <span className="flex items-center justify-center gap-2">
-              Image Uploading <Loader />
-            </span> :
-            "Add Room"}
+            {isCreating ? (
+              <Loader />
+            ) : isUploading ? (
+              <span className="flex items-center justify-center gap-2">
+                Image Uploading <Loader />
+              </span>
+            ) : (
+              "Add Room"
+            )}
           </button>
         </form>
       </div>

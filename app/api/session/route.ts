@@ -1,5 +1,3 @@
-// app/api/session/route.ts
-// API route to check if user is logged in
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 

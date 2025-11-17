@@ -37,7 +37,6 @@ export default function SignOutModal() {
         <LogOutIcon className="inline-block w-5 h-5 ml-2" />
       </button>
 
-      {/* Modal */}
       <AnimatePresence>
         {open && (
           <motion.div

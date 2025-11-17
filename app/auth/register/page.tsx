@@ -71,7 +71,6 @@ export default function RegisterPage() {
       setServerError(result.message);
       setLoading(false);
     } else {
-      // Auto-logged in, redirect to home
       setLoading(false);
       toast.success("Registration successful");
       router.push("/");
@@ -89,7 +88,7 @@ export default function RegisterPage() {
           <div>
             {serverError && <p className="text-red-600">{serverError}</p>}
           </div>
-          {/* Name Field */}
+
           <div>
             <label
               htmlFor="name"
@@ -109,7 +108,6 @@ export default function RegisterPage() {
             )}
           </div>
 
-          {/* Email Field */}
           <div>
             <label
               htmlFor="email"
@@ -129,7 +127,6 @@ export default function RegisterPage() {
             )}
           </div>
 
-          {/* Password Field */}
           <div>
             <label
               htmlFor="password"
@@ -149,7 +146,6 @@ export default function RegisterPage() {
             )}
           </div>
 
-          {/* Confirm Password Field */}
           <div>
             <label
               htmlFor="confirmPassword"
@@ -169,7 +165,6 @@ export default function RegisterPage() {
             )}
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-light transition-all"
@@ -178,7 +173,6 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        {/* Login Link */}
         <p className="text-center text-sm text-muted mt-6">
           Already have an account?{" "}
           <Link

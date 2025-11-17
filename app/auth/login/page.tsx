@@ -1,19 +1,20 @@
-'use client';
+"use client";
 
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import {z} from "zod";
-import {zodResolver} from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
-import {toast} from "react-hot-toast";
+import { toast } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Loader from "@/components/Loader";
 
-
-
 const schema = z.object({
-    email: z.string().email({ message: "Invalid email address" }),
-    password: z.string().min(6, { message: "Password must be at least 6 characters long" }).max(100),
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters long" })
+    .max(100),
 });
 
 type FormData = {
@@ -21,12 +22,15 @@ type FormData = {
   password: string;
 };
 
-
 export default function LoginPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormData>({
     resolver: zodResolver(schema),
   });
 
@@ -53,7 +57,6 @@ export default function LoginPage() {
     }
   }
 
-
   return (
     <div className="min-h-[calc(100vh-11rem)] flex items-center justify-center overflow-hidden">
       <div className="bg-card border border-border rounded-lg shadow-lg p-8 w-full max-w-md">
@@ -65,7 +68,7 @@ export default function LoginPage() {
           <div>
             {serverError && <p className="text-red-600">{serverError}</p>}
           </div>
-          {/* Email Field */}
+
           <div>
             <label
               htmlFor="email"
@@ -80,10 +83,11 @@ export default function LoginPage() {
               placeholder="Enter your email"
               {...register("email", { required: true })}
             />
-            {errors.email && <span className="text-red-500">Email is required</span>}
+            {errors.email && (
+              <span className="text-red-500">Email is required</span>
+            )}
           </div>
 
-          {/* Password Field */}
           <div>
             <label
               htmlFor="password"
@@ -98,10 +102,11 @@ export default function LoginPage() {
               placeholder="Enter your password"
               {...register("password", { required: true })}
             />
-            {errors.password && <span className="text-red-500">Password is required</span>}
+            {errors.password && (
+              <span className="text-red-500">Password is required</span>
+            )}
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
             className="w-full bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-light transition-all"
@@ -110,7 +115,6 @@ export default function LoginPage() {
           </button>
         </form>
 
-        {/* Signup Link */}
         <p className="text-center text-sm text-muted mt-6">
           Don&apos;t have an account?{" "}
           <Link

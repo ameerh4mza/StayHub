@@ -7,9 +7,9 @@ export async function GET() {
     return NextResponse.json(result);
   } catch (error) {
     console.error("Error fetching user:", error);
-    return NextResponse.json({ 
-      success: false, 
-      user: null 
+    return NextResponse.json({
+      success: false,
+      user: null,
     });
   }
 }

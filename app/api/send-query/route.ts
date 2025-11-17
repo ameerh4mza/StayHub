@@ -9,11 +9,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    // Configure nodemailer
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST,
       port: Number(process.env.SMTP_PORT),
-      secure: process.env.SMTP_SECURE === "true", // true for 465, false for other ports
+      secure: process.env.SMTP_SECURE === "true",
       auth: {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
@@ -21,8 +20,8 @@ export async function POST(req: Request) {
     });
 
     await transporter.sendMail({
-      from: `"${name}" <${email}>`, // sender
-      to: process.env.MY_EMAIL, // your personal email
+      from: `"${name}" <${email}>`,
+      to: process.env.MY_EMAIL,
       subject: `Room Query from ${name}`,
       text: message,
       html: `<p>${message}</p><p>From: ${name} (${email})</p>`,

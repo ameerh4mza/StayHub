@@ -9,37 +9,43 @@ export default async function MyRoomsPage() {
   const rooms = await getMyRooms();
   const userRole = await getCurrentUserRole();
   const currentUser = await getUser();
-  
+
   let creatorsInfo: Map<string, UserInfo> = new Map();
   const adminManagerIds: string[] = [];
-  
+
   if (userRole === "admin" && rooms.length > 0) {
-    const uniqueUserIds = [...new Set(rooms.map(room => room.user_id))];
-    
+    const uniqueUserIds = [...new Set(rooms.map((room) => room.user_id))];
+
     creatorsInfo = await getUsersInfo(uniqueUserIds);
     console.log("Fetched creators info:", creatorsInfo);
-    
+
     const { teams } = createAdminClient();
-    
+
     try {
       const teamList = await teams.list();
-      
-      const adminTeam = teamList.teams.find(team => team.name === "Admins");
+
+      const adminTeam = teamList.teams.find((team) => team.name === "Admins");
       if (adminTeam) {
         const adminMemberships = await teams.listMemberships(adminTeam.$id);
-        adminManagerIds.push(...adminMemberships.memberships.map(m => m.userId));
+        adminManagerIds.push(
+          ...adminMemberships.memberships.map((m) => m.userId)
+        );
       }
-      
-      const managerTeam = teamList.teams.find(team => team.name === "Managers");
+
+      const managerTeam = teamList.teams.find(
+        (team) => team.name === "Managers"
+      );
       if (managerTeam) {
         const managerMemberships = await teams.listMemberships(managerTeam.$id);
-        adminManagerIds.push(...managerMemberships.memberships.map(m => m.userId));
+        adminManagerIds.push(
+          ...managerMemberships.memberships.map((m) => m.userId)
+        );
       }
     } catch (error) {
       console.error("Error fetching team information:", error);
     }
   }
-  
+
   const getPageTitle = () => {
     switch (userRole) {
       case "admin":
@@ -62,11 +68,11 @@ export default async function MyRoomsPage() {
     }
   };
 
-  const getUserRole = (userId: string): 'admin' | 'manager' | 'user' => {
+  const getUserRole = (userId: string): "admin" | "manager" | "user" => {
     if (adminManagerIds.includes(userId)) {
-      return 'manager';
+      return "manager";
     }
-    return 'user';
+    return "user";
   };
 
   return (
@@ -75,7 +81,7 @@ export default async function MyRoomsPage() {
         <h1 className="text-4xl font-extrabold text-foreground text-center mb-12 border-b border-border pb-4">
           {getPageTitle()}
         </h1>
-        
+
         {rooms.length === 0 ? (
           <div className="bg-muted/30 p-10 rounded-xl shadow-inner max-w-lg mx-auto">
             <p className="text-center text-lg text-muted-foreground font-medium">
@@ -83,21 +89,25 @@ export default async function MyRoomsPage() {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-16"> 
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-16">
             {rooms.map((room) => {
               const creatorInfo = creatorsInfo.get(room.user_id);
               const creatorRole = getUserRole(room.user_id);
-              
+
               return (
-                <div key={room.$id} className="w-full"> 
-                  <UserRoomCard 
+                <div key={room.$id} className="w-full">
+                  <UserRoomCard
                     room={room}
                     showCreatorInfo={userRole === "admin"}
                     currentUserId={currentUser.user?.$id}
-                    creatorInfo={creatorInfo ? {
-                      name: creatorInfo.name,
-                      role: creatorRole
-                    } : undefined}
+                    creatorInfo={
+                      creatorInfo
+                        ? {
+                            name: creatorInfo.name,
+                            role: creatorRole,
+                          }
+                        : undefined
+                    }
                   />
                 </div>
               );

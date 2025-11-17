@@ -27,7 +27,6 @@ export default function ProfileClient({ user }: ProfileClientProps) {
     throw new Error("Cloudinary environment variables are not set");
   }
 
-  // handle image upload
   async function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -56,7 +55,6 @@ export default function ProfileClient({ user }: ProfileClientProps) {
         toast.dismiss();
         toast.success("Image uploaded successfully!");
 
-        // Save new image URL to Appwrite user profile
         const updateRes = await fetch("/api/update-profile-image", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -90,7 +88,6 @@ export default function ProfileClient({ user }: ProfileClientProps) {
         </h1>
 
         <div className="bg-card border border-border rounded-lg shadow-lg p-8">
-          {/* Profile Picture Section */}
           <div className="flex flex-col items-center mb-8 relative">
             <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary mb-4">
               {preview ? (
@@ -126,7 +123,6 @@ export default function ProfileClient({ user }: ProfileClientProps) {
             />
           </div>
 
-          {/* User Information */}
           <div className="space-y-6">
             <div>
               <label className="block text-sm font-semibold text-foreground mb-2">
@@ -156,7 +152,6 @@ export default function ProfileClient({ user }: ProfileClientProps) {
             </div>
           </div>
 
-          {/* Sign Out */}
           <div className="mt-8 flex justify-center">
             <SignOutModal />
           </div>

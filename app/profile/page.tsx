@@ -1,4 +1,3 @@
-// app/profile/page.tsx
 import { getUser } from "@/app/actions/getUser";
 import { redirect } from "next/navigation";
 import ProfileClient from "@/app/actions/profileClient";

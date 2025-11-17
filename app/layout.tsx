@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import {Toaster} from "react-hot-toast";
+import { Toaster } from "react-hot-toast";
 import LayoutWrapper from "@/components/LayoutWrapper";
 
 export const metadata: Metadata = {
@@ -20,8 +20,8 @@ export default function RootLayout({
     <html lang="en">
       <body className="antialiased">
         <LayoutWrapper>
-        {children}
-        <Toaster position="top-right" reverseOrder={false} />
+          {children}
+          <Toaster position="top-right" reverseOrder={false} />
         </LayoutWrapper>
       </body>
     </html>

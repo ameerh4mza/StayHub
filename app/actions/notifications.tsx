@@ -53,10 +53,7 @@ export async function getUserNotifications(userId: string) {
     const { documents: notifications } = await databases.listDocuments(
       process.env.NEXT_APPWRITE_DATABASE_ID!,
       process.env.NEXT_APPWRITE_NOTIFICATIONS_COLLECTION_ID!,
-      [
-        Query.equal("user_id", userId),
-        Query.equal("is_read", false)
-      ]
+      [Query.equal("user_id", userId), Query.equal("is_read", false)]
     );
 
     return { success: true, notifications };

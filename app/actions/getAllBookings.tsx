@@ -1,37 +1,34 @@
 "use server";
 
 import { createSessionClient } from "@/config/appwrite";
-import {cookies} from "next/headers";
+import { cookies } from "next/headers";
 import { Query } from "node-appwrite";
 import { redirect } from "next/navigation";
 import { BookingWithRoom } from "@/types/booking";
 
 export default async function getAllBookings(): Promise<BookingWithRoom[]> {
-    try{
+  try {
     const sessionCookie = await cookies();
-        const request = new Request("http://localhost", {
+    const request = new Request("http://localhost", {
       headers: {
         cookie: sessionCookie.toString(),
       },
     });
     const session = sessionCookie.get("my-custom-session");
     if (!session) {
-        redirect('/auth/login');
+      redirect("/auth/login");
     }
 
     const { account, databases } = await createSessionClient(request);
-    // Get the current user id
     const user = await account.get();
     const userId = user.$id;
-    
-    // Fetch bookings for the current user
+
     const { documents: bookings } = await databases.listDocuments(
       process.env.NEXT_APPWRITE_DATABASE_ID!,
       process.env.NEXT_APPWRITE_BOOKINGS_COLLECTION_ID!,
       [Query.equal("user_id", userId)]
     );
 
-    // Fetch room details for each booking
     const bookingsWithRoomDetails = await Promise.all(
       bookings.map(async (booking) => {
         try {
@@ -40,16 +37,16 @@ export default async function getAllBookings(): Promise<BookingWithRoom[]> {
             process.env.NEXT_APPWRITE_ROOMS_COLLECTION_ID!,
             booking.room_id
           );
-          
+
           return {
             ...booking,
             room: room,
             name: room.name as string,
             address: room.address as string,
-            location: room.location as string || "",
+            location: (room.location as string) || "",
             price_per_hour: room.price_per_hour as number,
-            image: room.image as string || "",
-          }as unknown as BookingWithRoom;
+            image: (room.image as string) || "",
+          } as unknown as BookingWithRoom;
         } catch (error) {
           console.error(`Error fetching room ${booking.room_id}:`, error);
           return {
@@ -70,4 +67,3 @@ export default async function getAllBookings(): Promise<BookingWithRoom[]> {
     return [];
   }
 }
-

@@ -12,7 +12,6 @@ export async function updateBookingStatus(
   status: BookingStatus
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    // Require manager or admin role
     await requireRole(["manager", "admin"]);
 
     const sessionCookie = await cookies();
@@ -31,14 +30,17 @@ export async function updateBookingStatus(
 
     const { databases } = createSessionClient(request);
 
-    // Get booking details first to get user_id for notification
     const booking = await databases.getDocument(
       process.env.NEXT_APPWRITE_DATABASE_ID!,
       process.env.NEXT_APPWRITE_BOOKINGS_COLLECTION_ID!,
       bookingId
     );
-
-    // Update booking status (simplified - status enum contains cancellation source)
+    if (!booking) {
+      return {
+        success: false,
+        error: "Booking not found",
+      };
+    }
     await databases.updateDocument(
       process.env.NEXT_APPWRITE_DATABASE_ID!,
       process.env.NEXT_APPWRITE_BOOKINGS_COLLECTION_ID!,
@@ -46,7 +48,6 @@ export async function updateBookingStatus(
       { status }
     );
 
-    // Create notification for the user
     let notificationMessage = "";
     let notificationType:
       | "booking_confirmed"
@@ -70,11 +71,9 @@ export async function updateBookingStatus(
         notificationType = "booking_cancelled";
         break;
       default:
-        // Don't create notification for other status changes
-        break;
+        throw new Error("Invalid booking status");
     }
 
-    // Create notification if message is set
     if (notificationMessage) {
       await createNotification(
         booking.user_id,
@@ -84,7 +83,6 @@ export async function updateBookingStatus(
       );
     }
 
-    // Revalidate all booking pages
     revalidatePath("/admin/bookings");
     revalidatePath("/manager/bookings");
     revalidatePath("/bookings");

@@ -8,14 +8,12 @@ export default function BookingRoomCard({
 }: {
   bookings: BookingWithRoom[];
 }) {
-  // Filter out cancelled bookings for user view (they shouldn't see cancelled ones)
   const activeBookings = bookings.filter(
     (booking) =>
       booking.status !== "cancelled_by_user" &&
       booking.status !== "cancelled_by_admin"
   );
 
-  // Get status colors and labels
   const getStatusColor = (status: string) => {
     switch (status) {
       case "pending":
@@ -53,7 +51,6 @@ export default function BookingRoomCard({
               key={booking.$id}
               className="bg-card border border-border rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 p-6 w-110 h-[500px] flex flex-col"
             >
-              {/* Room Image */}
               {booking.image && (
                 <div className="relative w-full h-48 mb-4 rounded-lg overflow-hidden shrink-0">
                   <Image
@@ -70,7 +67,6 @@ export default function BookingRoomCard({
                 {booking.name}
               </h2>
 
-              {/* Booking Status */}
               <div className="mb-3">
                 <span
                   className={`px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(
@@ -128,12 +124,10 @@ export default function BookingRoomCard({
                   </button>
                 </Link>
 
-                {/* Only show cancel button for pending bookings */}
                 {(booking.status === "pending" || !booking.status) && (
                   <CancelBookingButton bookingId={booking.$id} />
                 )}
 
-                {/* Show status message for non-pending bookings */}
                 {booking.status === "confirmed" && (
                   <div className="flex-1 text-center py-2 px-3 bg-green-50 text-green-700 rounded-md text-sm font-medium">
                     Enjoy your booking!
