@@ -7,7 +7,7 @@ export const metadata: Metadata = {
   title: "StayHub | Book Your Dream Stay",
   description: "Find and book your perfect stay with StayHub",
   icons: {
-    icon: "/my-icon.ico",
+    icon: "/new-favicon.ico",
   },
 };
 

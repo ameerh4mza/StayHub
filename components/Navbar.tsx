@@ -66,14 +66,14 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="shrink-0">
             <Image
-              src="/logo.png"
+              src="/final-1.png"
               alt="StayHub Logo"
               width={100}
               height={60}
               sizes="100"
               priority={true}
               loading="eager"
-              className="shrink-0 w-28 h-16 object-contain"
+              className="shrink-0 w-28 h-28 object-contain left-0"
             />
           </Link>
 
@@ -225,14 +225,14 @@ export default function Navbar() {
                 </Link>
               )}
 
-              {userRole === "user" && (
+              {/* {userRole === "user" && (
                 <Link
                   href="/rooms/my"
                   className={`${baseLinkStyle} flex items-center gap-2 px-3 py-2 rounded-md text-base font-medium`}
                 >
                   My Rooms <DoorOpen className="w-4 h-4" />
                 </Link>
-              )}
+              )} */}
             </>
           )}
 
