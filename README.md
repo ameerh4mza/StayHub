@@ -105,6 +105,7 @@ Appwrite (Database + Auth + Teams)
 Cloudinary for media storage
 
 📁 Project Structure
+```text
 StayHub/
 ├── app/
 │   ├── actions/
@@ -153,6 +154,8 @@ StayHub/
 ├── config/appwrite.ts
 ├── lib/getUserInfo.ts
 └── proxy.ts
+
+```
 
 🚀 Installation
 1. Clone Repo
