@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { requireRole } from "@/app/actions/getCurrentUserRole";
 import { createAdminClient } from "@/config/appwrite";
 import { Query } from "node-appwrite";
