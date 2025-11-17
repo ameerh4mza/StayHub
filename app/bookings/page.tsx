@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import getAllBookings from "@/app/actions/getAllBookings";
 import BookingRoomCard from "@/components/BookingRoomCard";
 

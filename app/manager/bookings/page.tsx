@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { requireRole } from "@/app/actions/getCurrentUserRole";
 import { createSessionClient } from "@/config/appwrite";
 import { cookies } from "next/headers";
